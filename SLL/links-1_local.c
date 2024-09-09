@@ -9,8 +9,8 @@ typedef struct node
 
 NODE *insertFront(NODE *list, int x);
 void insertEnd(NODE *list, int x);
-void deleteFront();
-void deleteEnd();
+void deleteFront(NODE **list);
+void deleteEnd(NODE **list);
 void position_insert(NODE **list, int x, int pos);
 void position_delete(NODE **list, int pos);
 void display(NODE *list);
