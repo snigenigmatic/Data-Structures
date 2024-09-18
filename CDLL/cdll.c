@@ -22,17 +22,20 @@ void main()
 
     while (1)
     {
-        printf(" Enter 1->Front Insertion\n2->Display\n3->end Insertion\n");
-        printf(" Enter 4->Front deletion\n5->End Deletion\n6->exit");
-
-        printf(" Enter YOUR CHOICE");
+        printf("\n 1. Insert Front");
+        printf("\n 2. Display");
+        printf("\n 3. Insert End");
+        printf("\n 4. Delete Front");
+        printf("\n 5. Delete End");
+        printf("\n 6. Exit");
+        printf(" Enter YOUR CHOICE : ");
         scanf("%d", &ch);
 
         switch (ch)
         {
         case 1:
         {
-            printf(" Enter the information");
+            printf(" Enter the information :");
             scanf("%d", &x);
             dlist = frontins(dlist, x);
         }
@@ -44,7 +47,7 @@ void main()
         break;
         case 3:
         {
-            printf(" Enter the information");
+            printf(" Enter the information :");
             scanf("%d", &x);
             dlist = endins(dlist, x);
         }
