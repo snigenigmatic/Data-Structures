@@ -28,7 +28,7 @@ void main()
         printf("\n 4. Delete Front");
         printf("\n 5. Delete End");
         printf("\n 6. Exit");
-        printf(" Enter YOUR CHOICE : ");
+        printf("\n Enter YOUR CHOICE : ");
         scanf("%d", &ch);
 
         switch (ch)
