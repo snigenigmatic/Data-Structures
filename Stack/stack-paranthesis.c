@@ -69,14 +69,6 @@ int isMatchingParenthesis(char *exp)
                 return 0; // Invalid expression
             }
         }
-        else if (exp[i] == ')')
-        {
-            if (isEmpty(&s))
-            {
-                return 0; // Invalid expression
-            }
-            pop(&s);
-        }
     }
     return isEmpty(&s); // Valid if stack is empty
 }
