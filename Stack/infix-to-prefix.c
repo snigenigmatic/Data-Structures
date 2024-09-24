@@ -31,7 +31,7 @@ char seek(Stack *);
 Stack *convert_to_postfix(Stack *stack, char infix[], char postfix[]);
 int input_presedence(char ch);
 int stack_presedence(char ch);
-void reverse(char infix[]);
+char reverse(char infix[]);
 void reverse_string(char infix[], int start, int end);
 
 int main()
@@ -43,8 +43,8 @@ int main()
     scanf("%[^\n]s", infix);
     reverse(infix);
     convert_to_postfix(stack, infix, postfix);
-    reverse(postfix);
-    printf("The Prefix Expression is: %s\n", postfix);
+    char prefix[] = reverse(postfix);
+    printf("The Prefix Expression is: %s\n", prefix);
     return 0;
 }
 
@@ -149,7 +149,7 @@ int stack_presedence(char ch)
     }
 }
 
-void reverse(char infix[])
+char reverse(char infix[])
 {
     int i = 0, j = 0;
     while (infix[j] != '\0')
@@ -157,6 +157,7 @@ void reverse(char infix[])
         j++;
     }
     reverse_string(infix, i, j - 1);
+    return infix;
 }
 
 void reverse_string(char infix[], int start, int end)
