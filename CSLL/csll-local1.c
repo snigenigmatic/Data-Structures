@@ -8,10 +8,10 @@ typedef struct node {
 
 NODE *insertFront(NODE *list, int x);
 NODE *insertEnd(NODE *list, int x);
-void deleteFront(NODE **list);
-void deleteEnd(NODE **list);
-void position_insert(NODE **list, int x, int pos);
-void position_delete(NODE **list, int pos);
+NODE *deleteFront(NODE *list);
+NODE *deleteEnd(NODE *list);
+NODE *position_insert(NODE *list, int x, int pos);
+NODE *position_delete(NODE *list, int pos);
 void display(NODE *list);
 NODE *ordered_insert(NODE *list, int x);
 
@@ -44,20 +44,20 @@ int main() {
                 list = insertEnd(list, x);
                 break;
             case 3:
-                deleteFront(&list);
+                list = deleteFront(list);
                 break;
             case 4:
-                deleteEnd(&list);
+                list = deleteEnd(list);
                 break;
             case 5:
                 printf("Enter the information and position: ");
                 scanf("%d %d", &x, &pos);
-                position_insert(&list, x, pos);
+                list = position_insert(list, x, pos);
                 break;
             case 6:
                 printf("Enter the position: ");
                 scanf("%d", &pos);
-                position_delete(&list, pos);
+                list = position_delete(list, pos);
                 break;
             case 7:
                 printf("Enter the information: ");
@@ -78,9 +78,15 @@ int main() {
     return 0;
 }
 
-NODE *insertFront(NODE *list, int x) {
+NODE *createNode(int x) {
     NODE *newnode = (NODE *)malloc(sizeof(NODE));
     newnode->info = x;
+    newnode->next = NULL;
+    return newnode;
+}
+
+NODE *insertFront(NODE *list, int x) {
+    NODE *newnode = createNode(x);
     if (list == NULL) {
         newnode->next = newnode;
     } else {
@@ -91,13 +97,11 @@ NODE *insertFront(NODE *list, int x) {
         temp->next = newnode;
         newnode->next = list;
     }
-    list = newnode;
-    return list;
+    return newnode;
 }
 
 NODE *insertEnd(NODE *list, int x) {
-    NODE *newnode = (NODE *)malloc(sizeof(NODE));
-    newnode->info = x;
+    NODE *newnode = createNode(x);
     if (list == NULL) {
         newnode->next = newnode;
         return newnode;
@@ -124,108 +128,110 @@ void display(NODE *list) {
     } while (temp != list);
 }
 
-void deleteFront(NODE **list) {
-    if (*list == NULL) {
+NODE *deleteFront(NODE *list) {
+    if (list == NULL) {
         printf("List is empty\n");
-        return;
+        return NULL;
     }
-    NODE *temp = *list;
-    if (temp->next == *list) {
+    NODE *temp = list;
+    if (temp->next == list) {
         free(temp);
-        *list = NULL;
+        return NULL;
     } else {
-        NODE *last = *list;
-        while (last->next != *list) {
+        NODE *last = list;
+        while (last->next != list) {
             last = last->next;
         }
-        *list = (*list)->next;
-        last->next = *list;
+        list = list->next;
+        last->next = list;
         free(temp);
     }
+    return list;
 }
 
-void deleteEnd(NODE **list) {
-    if (*list == NULL) {
+NODE *deleteEnd(NODE *list) {
+    if (list == NULL) {
         printf("List is empty\n");
-        return;
+        return NULL;
     }
-    NODE *temp = *list;
-    if (temp->next == *list) {
+    NODE *temp = list;
+    if (temp->next == list) {
         free(temp);
-        *list = NULL;
+        return NULL;
     } else {
         NODE *prev = NULL;
-        while (temp->next != *list) {
+        while (temp->next != list) {
             prev = temp;
             temp = temp->next;
         }
-        prev->next = *list;
+        prev->next = list;
         free(temp);
     }
+    return list;
 }
 
-void position_insert(NODE **list, int x, int pos) {
-    NODE *newnode = (NODE *)malloc(sizeof(NODE));
-    newnode->info = x;
-    if (*list == NULL || pos == 1) {
-        if (*list == NULL) {
+NODE *position_insert(NODE *list, int x, int pos) {
+    NODE *newnode = createNode(x);
+    if (list == NULL || pos == 1) {
+        if (list == NULL) {
             newnode->next = newnode;
         } else {
-            NODE *temp = *list;
-            while (temp->next != *list) {
+            NODE *temp = list;
+            while (temp->next != list) {
                 temp = temp->next;
             }
             temp->next = newnode;
-            newnode->next = *list;
+            newnode->next = list;
         }
-        *list = newnode;
+        return newnode;
     } else {
-        NODE *temp = *list;
-        for (int i = 1; i < pos - 1 && temp->next != *list; i++) {
+        NODE *temp = list;
+        for (int i = 1; i < pos - 1 && temp->next != list; i++) {
             temp = temp->next;
         }
         newnode->next = temp->next;
         temp->next = newnode;
     }
+    return list;
 }
 
-void position_delete(NODE **list, int pos) {
-    if (*list == NULL) {
+NODE *position_delete(NODE *list, int pos) {
+    if (list == NULL) {
         printf("List is empty\n");
-        return;
+        return NULL;
     }
-    NODE *temp = *list;
+    NODE *temp = list;
     if (pos == 1) {
-        if (temp->next == *list) {
+        if (temp->next == list) {
             free(temp);
-            *list = NULL;
+            return NULL;
         } else {
-            NODE *last = *list;
-            while (last->next != *list) {
+            NODE *last = list;
+            while (last->next != list) {
                 last = last->next;
             }
-            *list = (*list)->next;
-            last->next = *list;
+            list = list->next;
+            last->next = list;
             free(temp);
         }
     } else {
         NODE *prev = NULL;
-        for (int i = 1; i < pos && temp->next != *list; i++) {
+        for (int i = 1; i < pos && temp->next != list; i++) {
             prev = temp;
             temp = temp->next;
         }
-        if (temp->next == *list) {
+        if (temp->next == list) {
             printf("Invalid position\n");
         } else {
             prev->next = temp->next;
             free(temp);
         }
     }
+    return list;
 }
 
 NODE *ordered_insert(NODE *list, int x) {
-    NODE *newnode = (NODE *)malloc(sizeof(NODE));
-    newnode->info = x;
+    NODE *newnode = createNode(x);
     if (list == NULL || x < list->info) {
         if (list == NULL) {
             newnode->next = newnode;
