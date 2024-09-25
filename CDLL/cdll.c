@@ -172,6 +172,7 @@ DNODE *enddel(DNODE *dlist)
         temp = dlist->left;
         dlist->left = temp->left;
         (dlist->left)->right = dlist;
+        free(temp);
     }
     return dlist;
 }
