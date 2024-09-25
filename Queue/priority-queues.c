@@ -13,6 +13,7 @@ typedef struct node
 
 NODE *front = NULL;
 
+NODE *createNode(int x, int pty);
 void enqueue(int data, int priority);
 int dequeue();
 bool isEmpty();
@@ -58,12 +59,19 @@ int main()
     return 0;
 }
 
+NODE *createNode(int x, int pty)
+{
+    NODE *newNode = (NODE*)malloc(sizeof(NODE));
+    newNode->data = x;
+    newNode->priority = pty;
+    newNode->next = NULL;
+    return newNode;
+}
+
+
 void enqueue(int data, int priority)
 {
-    NODE *newNode = (NODE *)malloc(sizeof(NODE));
-    newNode->data = data;
-    newNode->priority = priority;
-    newNode->next = NULL;
+    NODE *newNode = createNode(data, priority);
     if (front == NULL || priority < front->priority)
     {
         newNode->next = front;
