@@ -18,6 +18,9 @@ void postorder(TREE *);
 TREE *BST_delete(TREE *, int);
 TREE *search(TREE *, int);
 void countelements(TREE *);
+int smallest(TREE *);
+int largest(TREE *);
+void inorder_iterative(TREE *);
 
 int count = 0;
 
@@ -30,7 +33,7 @@ void main()
 
     while (1)
     {
-        printf("\n1.BST Insertion \n2.Preorder \n3.Inorder \n4.Postorder \n5.BST Deletion \n6.Search \n7.Count \n8.Exit ");
+        printf("\n1.BST Insertion \n2.Preorder \n3.Inorder \n4.Postorder \n5.BST Deletion \n6.Search \n7.Count \n8.Min and Max element \n9.Iterative Inorder Traversal \n10.Exit ");
         printf("\nEnter your choice :");
         scanf("%d", &ch);
         switch (ch)
@@ -78,6 +81,17 @@ void main()
             break;
         }
         case 8:
+        {
+            printf("Smallest element in the tree : %d\n", smallest(root));
+            printf("Largest element in the tree : %d\n", largest(root));
+            break;
+        }
+        case 9:
+        {
+            inorder_iterative(root);
+            break;
+        }
+        case 10:
         {
             exit(0);
         }
@@ -260,4 +274,55 @@ TREE *BST_delete(TREE *root, int key)
     }
     free(temp);
     return root;
+}
+
+// Traverson of BST in interative inorder fashion
+// 1. Create an empty stack S.
+// 2. Initialize current node as root
+// 3. Push the current node to S and set current = current->left until current is NULL
+// 4. If current is NULL and stack is not empty then
+
+int smallest(TREE *root) // helper function to find least element in the tree
+{
+    TREE *temp = root;
+    while (temp->left != NULL)
+    {
+        temp = temp->left;
+    }
+    return temp->info;
+}
+
+int largest(TREE *root) // helper function to find largest element in the tree
+{
+    TREE *temp = root;
+    while (temp->right != NULL)
+    {
+        temp = temp->right;
+    }
+    return temp->info;
+}
+
+void inorder_iterative(TREE *root)
+{
+    int top = -1;
+    TREE *temp = root;
+    TREE *stack[20];
+    while (1)
+    {
+        while (temp != NULL)
+        {
+            stack[++top] = temp;
+            temp = temp->left;
+        }
+        if (top != -1)
+        {
+            temp = stack[top--];
+            printf("%d ", temp->info);
+            temp = temp->right;
+        }
+        else
+        {
+            break;
+        }
+    }
 }
