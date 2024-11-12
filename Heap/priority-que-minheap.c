@@ -1,14 +1,3 @@
-/*
-- Title: Prirority Queue using Min Heap
-- Dev : Kaustubh
-- Purpose: To implement a priority queue using min heap
-- Implementation:
-    - The program takes the number of elements and the elements as input
-    - The program then heapifies the elements
-    - The program then displays the heap
-    - The program then deletes the minimum element from the heap
-    - The program then displays the heap
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -22,17 +11,16 @@ typedef struct pnode
     int priority;
 } PNODE;
 
-PNODE pq[MAX];
-int count = 0;
-
-// function prototypes
-void PQins(int, int);
-int PQdel(PNODE[]);
-void display();
+// Function prototypes
+void PQins(PNODE pq[], int *count, int num, int pty);
+int PQdel(PNODE pq[], int *count);
+void display(PNODE pq[], int count);
 
 int main()
 {
-    int ch, num, pty, min;
+    PNODE pq[MAX]; // Priority queue array
+    int count = 0; // Number of elements in the queue
+    int ch, num, pty;
 
     while (1)
     {
@@ -41,101 +29,119 @@ int main()
         printf("3.Display\n");
         printf("4.Exit\n");
         scanf("%d", &ch);
+
         switch (ch)
         {
         case 1:
-        {
-            printf("enter element and its priority:");
+            printf("Enter element and its priority: ");
             scanf("%d %d", &num, &pty);
-            PQins(num, pty); // same as ordered ins here, enqueue just as its queue
+            PQins(pq, &count, num, pty);
             break;
-        }
         case 2:
-        {
-            min = PQdel(pq);
-            printf("Deleted element is: %d\n", min);
+            if (count == 0)
+            {
+                printf("Queue is empty, cannot dequeue.\n");
+            }
+            else
+            {
+                int min = PQdel(pq, &count);
+                printf("Deleted element is: %d\n", min);
+            }
             break;
-        }
         case 3:
-        {
-            display();
+            display(pq, count);
             break;
-        }
-        default:
-        {
+        case 4:
             exit(0);
-            break;
-        }
+        default:
+            printf("Invalid choice! Please try again.\n");
         }
     }
     return 0;
 }
 
-void PQins(int num, int pty)
+void PQins(PNODE pq[], int *count, int num, int pty)
 {
-    int i, j;
-    PNODE temp, key;
+    if (*count >= MAX)
+    {
+        printf("Queue overflow! Cannot insert new element.\n");
+        return;
+    }
+
+    PNODE temp;
     temp.data = num;
     temp.priority = pty;
-    count++;
-    pq[count - 1] = temp;
-    i = count - 1;
-    j = (i - 1) / 2;
-    key = pq[i];
-    while (i > 0 && pq[j].priority > key.priority)
+    pq[*count] = temp; // Insert new element
+    (*count)++;        // Increment count
+
+    // Heapify up
+    int i = *count - 1;
+    while (i > 0)
     {
-        pq[i] = pq[j];
-        i = j;
-        j = (i - 1) / 2;
+        int parentIndex = (i - 1) / 2;
+        if (pq[parentIndex].priority <= pq[i].priority)
+        {
+            break; // Heap property satisfied
+        }
+        // Swap
+        PNODE tempNode = pq[parentIndex];
+        pq[parentIndex] = pq[i];
+        pq[i] = tempNode;
+        i = parentIndex;
     }
-    pq[i] = key;
 }
 
-void display()
+void display(PNODE pq[], int count)
 {
-    int i;
     if (count == 0)
     {
         printf("Queue is empty\n");
         return;
     }
+
     printf("Queue is: ");
-    for (i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
         printf("%d(%d) ", pq[i].data, pq[i].priority);
     }
     printf("\n");
 }
 
-int PQdel(PNODE pq[])
+int PQdel(PNODE pq[], int *count)
 {
-    int i, j;
-    PNODE key, min;
-    min = pq[0];
-    key = pq[count - 1];
-    count--;
-    i = 0;
-    j = 2 * i + 1;
-    while (j <= count - 1)
+    PNODE minNode = pq[0];  // Store the minimum node
+    pq[0] = pq[--(*count)]; // Move last node to root
+
+    // Heapify down
+    int i = 0;
+    while (true)
     {
-        if (j + 1 <= count - 1)
+        int leftChildIndex = 2 * i + 1;
+        int rightChildIndex = 2 * i + 2;
+        int smallestIndex = i;
+
+        if (leftChildIndex < *count && pq[leftChildIndex].priority < pq[smallestIndex].priority)
         {
-            if (pq[j].priority > pq[j + 1].priority)
-            {
-                j++;
-            }
+            smallestIndex = leftChildIndex;
         }
-        if (key.priority > pq[j].priority)
+
+        if (rightChildIndex < *count && pq[rightChildIndex].priority < pq[smallestIndex].priority)
         {
-            pq[i] = pq[j];
-            i = j;
-            j = 2 * i + 1;
+            smallestIndex = rightChildIndex;
         }
-        else
+
+        if (smallestIndex == i)
         {
-            break;
+            break; // Heap property satisfied
         }
+
+        // Swap
+        PNODE tempNode = pq[i];
+        pq[i] = pq[smallestIndex];
+        pq[smallestIndex] = tempNode;
+
+        i = smallestIndex; // Move down to child index
     }
-    pq[i] = key;
-    return min.data;
+
+    return minNode.data; // Return deleted minimum element
 }
