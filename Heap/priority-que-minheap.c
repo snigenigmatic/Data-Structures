@@ -74,20 +74,20 @@ void PQins(PNODE pq[], int *count, int num, int pty)
     pq[*count] = temp; // Insert new element
     (*count)++;        // Increment count
 
-    // Heapify up
+    // Heapify up (adjust to maintain minheap property)
     int i = *count - 1;
     while (i > 0)
     {
-        int parentIndex = (i - 1) / 2;
-        if (pq[parentIndex].priority <= pq[i].priority)
+        int j = (i - 1) / 2;// defining parent index
+        if (pq[j].priority <= pq[i].priority)// if parent priority is less than child priority
         {
             break; // Heap property satisfied
         }
         // Swap
-        PNODE tempNode = pq[parentIndex];
-        pq[parentIndex] = pq[i];
+        PNODE tempNode = pq[j];
+        pq[j] = pq[i];
         pq[i] = tempNode;
-        i = parentIndex;
+        i = j;
     }
 }
 
