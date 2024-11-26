@@ -31,12 +31,11 @@ void destroy(etnode *);
 
 // helper stack functions
 etnode *pop(etnode **, int *);
-void push(etnode **, etnode **, int *);
+void push(etnode **, etnode *, int *);
 
 // helper functions
 int isoperator(char);
 int precedence(char);
-
 
 // menu driven main function
 void main() {
@@ -117,8 +116,8 @@ etnode *pop(etnode **stack, int *top) {
         return stack[(*top)--];
 }
 
-void push(etnode **stack, etnode **node, int *top) {
-    stack[++(*top)] = *node;
+void push(etnode **stack, etnode *node, int *top) {
+    stack[++(*top)] = node;
 }
 
 // helper functions
@@ -139,3 +138,100 @@ int precedence(char x) {
 }
 
 // cretae expression tree
+
+etnode *createexpressiontree(char *postfix)
+{
+    char ch;
+    etnode *stack[100];
+    int top = -1;
+    int i = 0;
+
+    etnode *temp;
+    while(postfix[i] != '\0')
+    {
+        ch = postfix[i];
+        temp = createetnode(ch);
+        if(isoperator(ch))
+        {
+            temp->right = pop(stack, &top);
+            temp->left = pop(stack, &top);
+            push(stack, temp, &top);
+        }
+        else
+        {
+            push(stack, temp, &top);
+        }
+        i++;
+    }
+    return(pop(stack, &top)); // returns top of stack after popping
+}
+
+// ealuvate postfix expression
+
+int evaluate(etnode *t)
+{
+    int x;
+    
+    if (t == NULL) return 0;
+    
+    // If node is a leaf (operand)
+    if (!isoperator(t->data)) {
+        return t->data - '0';  // Convert char digit to integer
+    }
+    
+    // Evaluate left and right subtrees
+    int left_val = evaluate(t->left);
+    int right_val = evaluate(t->right);
+    
+    // Apply operator
+    switch(t->data)
+    {
+        case '+': return left_val + right_val;
+        case '-': return left_val - right_val;
+        case '*': return left_val * right_val;
+        case '/': return left_val / right_val;
+        default: return 0;
+    }
+}
+
+// display expression tree
+
+void inorder(etnode *t) {
+    if (t != NULL) {
+        inorder(t->left);
+        printf("%c ", t->data);
+        inorder(t->right);
+    }
+}
+
+void postorder(etnode *t) {
+    if (t != NULL) {
+        postorder(t->left);
+        postorder(t->right);
+        printf("%c ", t->data);
+    }
+}
+
+void preorder(etnode *t) {
+    if (t != NULL) {
+        printf("%c ", t->data);
+        preorder(t->left);
+        preorder(t->right);
+    }
+}   
+
+//destroy expression tree
+
+void destroy(etnode *t) {
+    if (t != NULL) {
+        destroy(t->left);
+        destroy(t->right);
+        free(t);
+    }
+    printf("Expression tree destroyed.\n");
+}
+
+
+
+// Output :
+// Give me a postfix expression: 2 3 + 4 5 * +
