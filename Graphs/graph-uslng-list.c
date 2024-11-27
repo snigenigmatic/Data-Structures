@@ -14,6 +14,7 @@ int visit[10];
 void createGraph();
 void insert(int, int);
 void dfs(int);
+void bfs(int);
 
 int n;
 struct node *a[100];
@@ -116,3 +117,21 @@ void insert(int i, int j)
     }
 }
 
+void bfs(int v)
+{
+    int w;
+    struct node *p;
+    visit[v] = 1;
+
+    for(p = a[v];p!=NULL;p=p->next)
+    {
+        w = p->vertex;
+        if(!visit[w])
+        {
+            visit[w] = 1;
+            printf(" %d", w);
+            bfs(w);
+        }
+        p = p->next;
+    }
+}

@@ -43,7 +43,7 @@ void creategraph()
         else
         {
             adjmat[i][j] = 1;
-            // adjmat[j][i]=1; // undirected graph
+            adjmat[j][i] = 1; // undirected graph
         }
     }
 }
@@ -86,7 +86,7 @@ void bfs(int v)
     while(!isEmpty())
     {
         v = qdelete();
-        for(w = 0; w <= n; w++)
+        for(w = 1; w <= n; w++)
         {
             if(visit[w] == 0 && adjmat[v][w] == 1)
             {

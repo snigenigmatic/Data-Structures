@@ -1,223 +1,170 @@
-/*
-Separate chaining
-
-- create buckets
-- we calculate index and store the element in the bucket
-- table size is fixed
-- hash function  : h(x) = (key % table_size) + 1
-- every node is of the same tyoe
-struct node {
-    int key;
-    char name[20];
-    struct node *next;
-};
-
-struct hash {
-    struct node *head;
-    int count;
-};
-*/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define MAX 10
-
+//program to implement seperate chaining
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 struct node
 {
-    int key;
-    char name[20];
-    struct node *next;
+   int key;
+   char name[100];
+   struct node *next;
 };
 
 struct hash
 {
-    struct node *head;
-    int count;
+  struct node *head;
+  int count;
 };
 
-// function prototypes
-
-void display(struct hash *, int);
-void insert_to_has(struct hash *, int, int, char *);
-void delete_from_hash(struct hash *, int, int);
-int search_in_hash(struct hash *, int, int, char *);
-
-// menu driven main function
-
+ void display(struct hash *, int);
+ void insert_to_hash(struct hash *,int,int, char *);
+ void delete_from_hash(struct hash*,int,int);
+ void search_in_hash(struct hash *ht,int size,int key);
 int main()
 {
-    struct hash *hash_table = (struct hash *)malloc(sizeof(struct hash) * MAX);
-    for (int i = 0; i < MAX; i++)
+  struct hash *hashtable;
+  int i,n,ch,key;
+  char name[100];
+  int tablesz;
+  printf("Enter the table size..");
+  scanf("%d",&tablesz);
+  //create hash table
+  hashtable=malloc(tablesz* sizeof(struct hash));
+  for(i=0;i<tablesz;i++)
+  {
+    hashtable[i].head=NULL;
+    hashtable[i].count=0;
+  }
+  while(1)
+  {
+    printf("\n1. Insert..");
+    printf("\n2. Delete..");
+    printf("\n3. Search..");
+    printf("\n4. Display..");
+    scanf("%d",&ch);
+    switch(ch)
     {
-        hash_table[i].head = NULL;
-        hash_table[i].count = 0;
+      case 1: printf("Enter key..\n");
+              scanf("%d",&key);
+              printf("Enter name..\n");
+              scanf("%s",name);
+              insert_to_hash(hashtable,tablesz,key,name);
+              break;
+      case 2: printf("Enter the key for deletion..\n");
+               scanf("%d",&key);
+               delete_from_hash(hashtable,tablesz,key);
+               break;
+      case 3: printf("Enter the key to search..\n");
+               scanf("%d",&key);
+               search_in_hash(hashtable,tablesz,key);
+               break;
+        case 4:display(hashtable,tablesz);
     }
-
-    int key, rNo;
-    char name[20];
-    int choice;
-
-    while (1)
-    {
-        printf("\n1. Insert a record\n");
-        printf("2. Delete a record\n");
-        printf("3. Search a record\n");
-        printf("4. Display the table\n");
-        printf("5. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice)
-        {
-        case 1:
-            printf("Enter the roll number: ");
-            scanf("%d", &rNo);
-            printf("Enter the name: ");
-            scanf("%s", name);
-            key = rNo % MAX;
-            insert_to_has(hash_table, key, rNo, name);
-            break;
-        case 2:
-            printf("Enter the roll number to be deleted: ");
-            scanf("%d", &rNo);
-            key = rNo % MAX;
-            delete_from_hash(hash_table, key, rNo);
-            break;
-        case 3:
-            printf("Enter the roll number to be searched: ");
-            scanf("%d", &rNo);
-            key = rNo % MAX;
-            if (search_in_hash(hash_table, key, rNo, name))
-            {
-                printf("Roll number: %d, Name: %s\n", rNo, name);
-            }
-            else
-            {
-                printf("Record not found!\n");
-            }
-            break;
-        case 4:
-            for (int i = 0; i < MAX; i++)
-            {
-                display(hash_table, i);
-            }
-            break;
-        case 5:
-            exit(1);
-        default:
-            printf("Invalid choice!\n");
-        }
-    }
-    return 0;
+  }
+ 
 }
 
-// function to display the hash table
+void  delete_from_hash(struct hash * ht,int size,int key)
+  {
 
-void display(struct hash *hash_table, int index)
-{
-    struct node *temp = hash_table[index].head;
-    if (temp == NULL)
-    {
-        printf("Index %d is empty\n", index);
+   struct node *prev,*temp;
+   int index;
+ 
+   index = key % size; //hash function
+   
+   prev=NULL;
+
+   temp=ht[index].head;
+   while((temp!=NULL)&&(temp->key!=key))
+   {
+     prev=temp;
+     temp=temp->next;
     }
-    else
-    {
-        printf("Index %d has elements: \n", index);
-        while (temp != NULL)
-        {
-            printf("Roll number: %d, Name: %s\n", temp->key, temp->name);
-            temp = temp->next;
-        }
-    }
-    return;
+  if(temp!=NULL)//key found
+  {
+   if(prev==NULL)//first node
+     ht[index].head=temp->next;
+   else
+     prev->next=temp->next;
+   free(temp);
+   }
+ else
+   printf("The record not found..\n");
 }
 
-// function to insert a record into the hash table
-
-void insert_to_has(struct hash *hash_table, int key, int rNo, char *name)
+ 
+void insert_to_hash(struct hash *ht, int size, int key, char*name)
 {
-    struct node *newNode = (struct node *)malloc(sizeof(struct node));
-    newNode->key = rNo;
-    strcpy(newNode->name, name);
-    newNode->next = NULL;
+   int index;
+   struct node *temp;
 
-    if (hash_table[key].head == NULL)
-    {
-        hash_table[key].head = newNode;
-        hash_table[key].count = 1;
-    }
-    else
-    {
-        newNode->next = hash_table[key].head;
-        hash_table[key].head = newNode;
-        hash_table[key].count++;
-    }
-    return;
+   temp=malloc(sizeof(struct node));
+   temp->key=key;
+   strcpy(temp->name,name);
+   temp->next=NULL;
+
+
+   index=key%size;//hash function
+
+   temp->next=ht[index].head;
+   ht[index].head=temp;
+   ht[index].count++;
 }
 
-// function to delete a record from the hash table
 
-void delete_from_hash(struct hash *hash_table, int key, int rNo)
+void display(struct hash* ht, int size)
 {
-    struct node *temp, *prev;
-    temp = hash_table[key].head;
-
-    if (temp == NULL)
-    {
-        printf("Record not found!\n");
-        return;
-    }
-
-    prev = NULL;
-    while (temp != NULL)
-    {
-        if (temp->key == rNo)
-        {
-            if (prev == NULL)
-            {
-                hash_table[key].head = temp->next;
-            }
-            else
-            {
-                prev->next = temp->next;
-            }
-            free(temp);
-            hash_table[key].count--;
-            return;
-        }
-        prev = temp;
-        temp = temp->next;
-    }
-    printf("Record not found!\n");
-    return;
-}
-
-// function to search a record in the hash table
-
-int search_in_hash(struct hash *hash_table, int key, int rNo, char *name)
-{
+    int i;
     struct node *temp;
-    temp = hash_table[key].head;
-
-    if (temp == NULL)
-    {
-        return 0;
-    }
-
-    while (temp != NULL)
-    {
-        if (temp->key == rNo)
+   printf("\n");
+   for(i=0;i<size;i++)
+   {
+     printf("%d :",i);
+     if(ht[i].head!=NULL)
+     {
+        temp=ht[i].head;
+        while(temp!=NULL)
         {
-            strcpy(name, temp->name);
-            return 1;
+          printf("%d ",temp->key);
+          printf("%s->",temp->name);
+          temp=temp->next;
         }
-        temp = temp->next;
-    }
-    return 0;
+      }
+    printf("\n");
+   }
 }
 
-// end of program
 
-// Output:
+void search_in_hash(struct hash *ht,int sz,int key)
+{
+    int index;
+   struct node *temp, *prev;
+
+   index=key%sz;
+
+   temp=ht[index].head;
+   
+
+   while((temp!=NULL)&&(temp->key!=key))
+        temp=temp->next;
+   
+   if(temp!=NULL)
+   {
+     printf("\nRecord found..Details are..\n");
+     printf("Key : %d ",temp->key);
+     printf("Name : %s",temp->name);     
+   }
+   else
+    printf("record not found..\n");
+ }
+
+
+
+
+
+
+
+
+
+
+
+
