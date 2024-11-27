@@ -276,7 +276,7 @@ TREE *BST_delete(TREE *root, int key)
     return root;
 }
 
-// Traverson of BST in interative inorder fashion
+// Traversion of BST in interative inorder fashion
 // 1. Create an empty stack S.
 // 2. Initialize current node as root
 // 3. Push the current node to S and set current = current->left until current is NULL
